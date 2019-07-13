@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sjxy.mrbbs.dao.EmployeeMapper">
+	<insert id="save" parameterType="cn.sjxy.mrbbs.domain.Employee">
+		insert into employee
+		values(#{empId},#{name},now(),#{salary},#{dept.deptId})
+	</insert>
+	
+	<resultMap type="cn.sjxy.mrbbs.domain.Employee" id="map">
+		<id column="empId" property="empId"/>
+		<result column="name" property="name"/>
+		<result column="hireDate" property="hireDate"/>
+		<result column="salary" property="salary"/>
+		<association property="dept" javaType="cn.sjxy.mrbbs.domain.Department"
+		column="deptId" select="cn.sjxy.mrbbs.dao.DepartmentMapper.findById">
+		</association>
+		
+		
+	</resultMap>
+	
+	<update id="update" parameterType="cn.sjxy.mrbbs.domain.Employee">
+		update employee 
+		set name=#{name},hireDate=#{hireDate},salary=#{salary},dept.deptId=#{dept.deptId}
+		where empId=#{empId}
+	</update>
+	
+	<delete id="deleteById" parameterType="String">
+		delete from employee 
+		where empId=#{empId}
+	</delete>
+	
+	<select id="findIncludeDeptById" parameterType="String" resultType="cn.sjxy.mrbbs.domain.Employee">
+		select * 
+		from employee e left join department d
+		on e.dept_id=d.deptId
+		where e.empId=#{empId}
+	</select>
+	
+	<select id="findEmpsByDeptId" parameterType="String" resultType="cn.sjxy.mrbbs.domain.Employee">
+		select * 
+		from department d left join employee e
+		on d.deptId=e.dept_id
+		
+		where d.deptId=#{deptId} 
+	</select>
+	
+	<select id="findAll"  resultMap="map">
+		select * from 
+	    employee e left join department d
+		on e.dept_id=d.deptId
+	</select>
+	
+	
+</mapper>
